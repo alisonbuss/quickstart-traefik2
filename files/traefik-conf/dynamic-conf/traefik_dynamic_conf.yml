@@ -1,0 +1,33 @@
+
+### Dynamic Configuration
+
+http:
+  routers:
+    http-catchall:
+      rule: hostregexp(`{host:.+}`)
+      entrypoints: 
+        - web
+      middlewares:
+        - redirect-https@file
+      priority: 1
+    api:
+      rule: Host(`traefik.swarm.localhost`)
+      service: api@internal
+      middlewares:
+        - auth
+      priority: 2
+
+  middlewares:
+    redirect-https:
+      redirectScheme:
+        scheme: https
+    auth:
+      basicAuth:
+        users:
+          - "test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"
+
+  services:
+    dummy-svc:
+      loadBalancer:
+        healthCheck:
+          port: 9999

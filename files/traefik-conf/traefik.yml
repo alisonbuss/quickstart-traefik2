@@ -1,0 +1,44 @@
+
+### Static Configuration
+
+api:
+  dashboard: true
+  debug: true
+
+# Enable Docker configuration backend
+providers:
+  file:
+    directory: /etc/traefik/dynamic-conf
+    watch: true
+  docker:
+    swarmMode: true
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: network_swarm_public
+
+# Entrypoints, http and https
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+# Enable ACME (Let's Encrypt): automatic SSL
+certificatesResolvers:
+  letsencryptresolver:
+    acme:
+      httpChallenge:
+        entryPoint: web
+      email: you-email@domain.com
+      storage: /etc/traefik/letsencrypt/acme.json
+
+# Enabling logging to get (startup, configuration, events, shutdown, and so on)
+log:
+  level: DEBUG
+  format: common
+  filePath: /var/log/traefik/traefik.log
+
+# Enabling access logging and redirects
+accessLog:
+  filePath: /var/log/traefik/access-log
+  format: common
