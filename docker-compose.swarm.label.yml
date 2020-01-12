@@ -30,25 +30,30 @@ services:
       - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge.entrypoint=web"
       - "--certificatesresolvers.letsencryptresolver.acme.email=you-email@domain.com"
-      - "--certificatesresolvers.letsencryptresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencryptresolver.acme.storage=/etc/traefik/letsencrypt/acme.json"
       - "--log.level=DEBUG"
       - "--log.format=common"
-      - "--log.filePath=/etc/traefik/traefik.log"
+      - "--log.filePath=/var/log/traefik/traefik.log"
       - "--accesslog=true"
-      - "--accesslog.filepath=/path/to/access.log"
+      - "--accesslog.filepath=/var/log/traefik/access-log"
     deploy:
       placement:
         constraints:
           - node.role == manager
       labels:
+        # 
         - "traefik.enable=true"
+        # 
         - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
         - "traefik.http.routers.http-catchall.entrypoints=web"
-        - "traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker"
-        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+        - "traefik.http.routers.http-catchall.middlewares=redirect-https@docker"
+        - "traefik.http.routers.http-catchall.priority=1"
+        - "traefik.http.middlewares.redirect-https.redirectscheme.scheme=https"
+        #
         - "traefik.http.routers.api.rule=Host(`traefik.swarm.localhost`)"
         - "traefik.http.routers.api.service=api@internal"
         - "traefik.http.routers.api.middlewares=auth"
+        - "traefik.http.routers.api.priority=2"
         - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/"
         - "traefik.http.services.dummy-svc.loadbalancer.server.port=9999"
       resources:
@@ -59,7 +64,7 @@ services:
         delay: 11s
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "vol_certificates:/letsencrypt"
+      - "vol_certificates:/etc/traefik/letsencrypt"
     ports:
       - "80:80" # The HTTP port
       - "443:443" # The HTTPS port

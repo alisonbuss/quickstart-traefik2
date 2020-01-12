@@ -4,14 +4,15 @@
 http:
   routers:
     http-catchall:
-      rule: hostregexp(`{host:.+}`)
-      entrypoints: 
+      rule: "HostRegexp(`{host:.+}`)"
+      service: dummy@file
+      entrypoints:
         - web
       middlewares:
         - redirect-https@file
       priority: 1
     api:
-      rule: Host(`traefik.swarm.localhost`)
+      rule: "Host(`traefik.swarm.localhost`)"
       service: api@internal
       middlewares:
         - auth
@@ -27,6 +28,10 @@ http:
           - "test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"
 
   services:
+    dummy:
+      loadBalancer:
+        servers:
+          - url: ""
     dummy-svc:
       loadBalancer:
         healthCheck:

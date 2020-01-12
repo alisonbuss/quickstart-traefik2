@@ -9,8 +9,6 @@ volumes:
     name: volume_swarm_certificates
 
 networks:
-  network_internal:
-    external: false
   network_public:
     external: true
     name: network_swarm_public
@@ -21,41 +19,12 @@ networks:
 services:
   reverse_proxy:
     image: traefik:v2.1.1 # The official Treafik docker image
-    # command:
-    #   - "--api.dashboard=true"
-    #   - "--providers.docker.swarmMode=true"
-    #   - "--providers.docker.endpoint=unix:///var/run/docker.sock"
-    #   - "--providers.docker.exposedbydefault=false"
-    #   - "--providers.docker.network=network_public"
-    #   - "--entrypoints.web.address=:80"
-    #   - "--entrypoints.websecure.address=:443"
-    #   - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge=true"
-    #   - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge.entrypoint=web"
-    #   - "--certificatesresolvers.letsencryptresolver.acme.email=you-email@domain.com"
-    #   - "--certificatesresolvers.letsencryptresolver.acme.storage=/etc/traefik/letsencrypt/acme.json"
-    #   - "--log.level=DEBUG"
-    #   - "--log.format=common"
-    #   - "--log.filePath=/var/log/traefik/traefik.log"
-    #   - "--accesslog=true"
-    #   - "--accesslog.filepath=/var/log/traefik/access-log"
     deploy:
       placement:
         constraints:
           - node.role == manager
       labels:
         - "traefik.enable=true"
-        # - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
-        # - "traefik.http.routers.http-catchall.entrypoints=web"
-        # - "traefik.http.routers.http-catchall.middlewares=redirect-https@docker"
-        # - "traefik.http.routers.http-catchall.priority=1"
-        # - "traefik.http.middlewares.redirect-https.redirectscheme.scheme=https"
-
-        # - "traefik.http.routers.api.rule=Host(`traefik.swarm.localhost`)"
-        # - "traefik.http.routers.api.service=api@internal"
-        # - "traefik.http.routers.api.middlewares=auth"
-        # - "traefik.http.routers.api.priority=2"
-        # - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/"
-        # - "traefik.http.services.dummy-svc.loadbalancer.server.port=9999"
       resources:
         limits:
           memory: 512M
