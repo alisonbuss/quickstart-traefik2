@@ -1,5 +1,5 @@
 
-# Quickstart of a reverse proxy service using Traefik(v2.*) with Docker Compose, Swarm, and Binary..
+# Quickstart of a reverse proxy service using Traefik(v2.*) with Docker Compose and Swarm.
 
 #### Translation for: **[English](https://github.com/alisonbuss/quickstart-traefik2/blob/master/README_LANG_EN.md)**.
 
@@ -48,9 +48,23 @@ docker node ls;
 
 docker service ls;
 
-docker network create --driver=overlay network_public;
+docker network create --driver=overlay network_swarm_public;
+docker network create --driver=overlay network_swarm_private;
 
-docker stack deploy traefik -c ./docker-compose.swarm.yml;
+docker volume create --name volume_swarm_shared \
+    --driver local \
+    --opt type=none \
+    --opt device=./volumes/shared \
+    --opt o=bind;
+
+docker volume create --name volume_swarm_certificates \
+    --driver local \
+    --opt type=none \
+    --opt device=./volumes/certificates \
+    --opt o=bind;
+
+docker stack deploy --compose-file ./swarm-compose/swarm-compose.traefik.yml traefik;
+docker stack deploy --compose-file ./swarm-compose/swarm-compose.app.yml app;
 
 docker service ls;
 
@@ -72,10 +86,12 @@ echo "127.0.1.1       whoami.swarm.localhost" >> /etc/hosts;
 # Open: https://whoami.swarm.localhost/
 
 docker stack rm traefik;
+docker stack rm app;
 
-docker volume rm traefik_vol_certificates;
+docker volume rm volume_swarm_shared;
+docker volume rm volume_swarm_certificates;
 
-docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(docker images -q) && docker system prune -a;
+docker system prune -a;
 
 ```
 
@@ -118,8 +134,6 @@ docker-compose --file ./docker-compose.yml ps;
 
 docker-compose --file ./docker-compose.yml rm -f;
 
-docker volume rm quickstart_traefik_vol_shared;
-
 docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(docker images -q) && docker system prune -a;
 
 ```
@@ -130,6 +144,7 @@ docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(d
 
 
 ### References:
+
 https://creekorful.me/how-to-expose-traefik-2-dashboard-securely-docker-swarm/
 
 https://semaphoreci.com/community/tutorials/running-applications-on-a-docker-swarm-mode-cluster

@@ -47,7 +47,7 @@ volume-create:
 		--opt device=$(VOLUME_SHARED_PATH) \
 		--opt o=bind;
 
-	-@docker volume create --name "$(VOLUME_CERTIFICATES_NAME)" \
+	-@docker volume create --name $(VOLUME_CERTIFICATES_NAME) \
 		--driver local \
 		--opt type=none \
 		--opt device=$(VOLUME_CERTIFICATES_PATH) \
