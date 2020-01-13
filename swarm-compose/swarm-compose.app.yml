@@ -46,6 +46,6 @@ services:
         condition: on-failure
         delay: 10s
       mode: replicated
-      replicas: 3
+      replicas: 2
     networks:
       - network_public

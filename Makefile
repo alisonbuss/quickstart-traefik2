@@ -32,7 +32,7 @@ network-create:
 
 # Remove networks of the Docker Swarm.
 network-remove:
-	-@docker network rm $(NETWORK_PUBLIC_NAME);
+	-@docker network rm $(NETWORK_PUBLIC_NAME) && sleep 2s;
 	-@docker network rm $(NETWORK_PRIVATE_NAME);
 
 # Print information from the volumes.
@@ -55,7 +55,7 @@ volume-create:
 
 # Remove volumes of the Docker Swarm.
 volume-remove:
-	-@docker volume rm $(VOLUME_SHARED_NAME);
+	-@docker volume rm $(VOLUME_SHARED_NAME) && sleep 2s;
 	-@docker volume rm $(VOLUME_CERTIFICATES_NAME);
 
 # Print information from the services of the Docker Swarm.
@@ -83,6 +83,11 @@ stack-up-app:
 # Remove stack of the Application in Docker Swarm.
 stack-remove-app:
 	@docker stack rm app;
+
+
+stack-all-up: network-create volume-create stack-up-traefik stack-up-app 
+
+stack-all-rm: stack-remove-traefik stack-remove-app network-remove volume-remove
 
 
 ### VIEW DOCUMENTATION ###
