@@ -1,13 +1,18 @@
+# @Description: An example of Docker Swarm that
+# goes up a Traefik service.
+
 version: "3.7"
 
+# Defining swarm volumes with the DRIVER(local).
 volumes:
-  vol_shared:
+  vol_shared: # Path --> ./volumes/shared
     external: true
     name: volume_swarm_shared
-  vol_certificates:
+  vol_certificates: # Path --> ./volumes/certificates
     external: true
     name: volume_swarm_certificates
 
+# Defining swarm networks with the DRIVER(overlay).
 networks:
   network_public:
     external: true
@@ -16,45 +21,67 @@ networks:
     external: true
     name: network_swarm_private
 
+# Defining container services for Docker Swarm.
 services:
+  # Defining a reverse proxy service using Traefik.
   reverse_proxy:
     image: traefik:v2.1.1 # The official Treafik docker image
     command:
+      # Enable dashboard Treafik.
       - "--api.dashboard=true"
+      # Enable docker swarm provider.
       - "--providers.docker.swarmMode=true"
+      # Define docker socket access.
       - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      # Do not expose containers unless explicitly told so.
       - "--providers.docker.exposedbydefault=false"
+      # Define a default docker network to use for connections to all containers.
       - "--providers.docker.network=network_public"
+      # Traefik will listen to incoming request on the port 80/443 (http/https)
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
+      # Enable a http challenge named "letsencryptresolver"
       - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge=true"
+      # Tell it to use our predefined entrypoint named "web"
       - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge.entrypoint=web"
+      # The email to provide to let's encrypt
       - "--certificatesresolvers.letsencryptresolver.acme.email=you-email@domain.com"
+      # Tell to store the certificate on a path under our volume
       - "--certificatesresolvers.letsencryptresolver.acme.storage=/etc/traefik/letsencrypt/acme.json"
+      # Enable Traefik logs.
       - "--log.level=DEBUG"
-      - "--log.format=common"
+      - "--log.format=common" 
       - "--log.filePath=/var/log/traefik/traefik.log"
+      # Enable the access logs.
       - "--accesslog=true"
       - "--accesslog.filepath=/var/log/traefik/access-log"
     deploy:
-      placement:
-        constraints:
+      placement: 
+        # Install Traefik service only on the manager nodes.
+        constraints: 
           - node.role == manager
       labels:
-        # 
+        # Explicitly tell Traefik to expose this container.
         - "traefik.enable=true"
-        # 
+
+        # Define global redirect to https.
         - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
         - "traefik.http.routers.http-catchall.entrypoints=web"
         - "traefik.http.routers.http-catchall.middlewares=redirect-https@docker"
         - "traefik.http.routers.http-catchall.priority=1"
+        # Define middleware redirect to https.
         - "traefik.http.middlewares.redirect-https.redirectscheme.scheme=https"
-        #
+
+        # Define Traefik Dashboard Service. 
+        # The dashboard is the central place that shows you 
+        # the current active routes handled by Traefik.
         - "traefik.http.routers.api.rule=Host(`traefik.swarm.localhost`)"
         - "traefik.http.routers.api.service=api@internal"
         - "traefik.http.routers.api.middlewares=auth"
         - "traefik.http.routers.api.priority=2"
+        # Define middleware basicAuth, authentication with user and password.
         - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/"
+        # Dummy service for Swarm port detection. The port can be any valid integer value.
         - "traefik.http.services.dummy-svc.loadbalancer.server.port=9999"
       resources:
         limits:
@@ -63,33 +90,14 @@ services:
         condition: on-failure
         delay: 11s
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      # Define Docker socket access, read only.
+      # So that Traefik can listen to the Docker events
+      - "/var/run/docker.sock:/var/run/docker.sock:ro" 
+      # Create a letsencrypt dir within the folder where the docker-compose file is.
       - "vol_certificates:/etc/traefik/letsencrypt"
     ports:
       - "80:80" # The HTTP port
       - "443:443" # The HTTPS port
       - "8080:8080" # The Web UI (Enabled by --api)
-    networks:
-      - network_public
-
-  whoami:
-    image: containous/whoami
-    depends_on:
-      - reverse_proxy
-    deploy:
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.whoami.rule=Host(`whoami.swarm.localhost`)"
-        - "traefik.http.routers.whoami.entrypoints=websecure"
-        - "traefik.http.routers.whoami.tls.certresolver=letsencryptresolver"
-        - "traefik.http.services.whoami.loadbalancer.server.port=80"
-      resources:
-        limits:
-          memory: 256M
-      restart_policy:
-        condition: on-failure
-        delay: 10s
-      mode: replicated
-      replicas: 2
     networks:
       - network_public

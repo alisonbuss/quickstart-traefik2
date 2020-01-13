@@ -1,6 +1,6 @@
-
 ### Static Configuration
 
+# Enable dashboard Treafik.
 api:
   dashboard: true
   debug: true
@@ -11,12 +11,16 @@ providers:
     directory: /etc/traefik/dynamic-conf
     watch: true
   docker:
-    swarmMode: true
+    # If it is in Swarm mode.
+    # swarmMode: true
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
-    network: network_swarm_public
+    # If it is in Swarm mode.
+    # network: network_swarm_public
+    network: quickstart-traefik2_network_local
 
 # Entrypoints, http and https
+# Traefik will listen to incoming request on the port 80/443 (http/https)
 entryPoints:
   web:
     address: ":80"
@@ -27,18 +31,22 @@ entryPoints:
 certificatesResolvers:
   letsencryptresolver:
     acme:
+      # Enable a http challenge named "letsencryptresolver"
       httpChallenge:
+        # Tell it to use our predefined entrypoint named "web"
         entryPoint: web
+      # The email to provide to let's encrypt
       email: you-email@domain.com
+      # Tell to store the certificate on a path under our volume
       storage: /etc/traefik/letsencrypt/acme.json
 
-# Enabling logging to get (startup, configuration, events, shutdown, and so on)
+# Enable Traefik logs(startup, configuration, events, shutdown, and so on)
 log:
   level: DEBUG
   format: common
   filePath: /var/log/traefik/traefik.log
 
-# Enabling access logging and redirects
+# Enable the access logs.
 accessLog:
   filePath: /var/log/traefik/access-log
   format: common

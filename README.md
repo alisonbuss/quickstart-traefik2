@@ -130,6 +130,13 @@ docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(d
 
 
 ### References:
+https://creekorful.me/how-to-expose-traefik-2-dashboard-securely-docker-swarm/
+
+https://semaphoreci.com/community/tutorials/running-applications-on-a-docker-swarm-mode-cluster
+
+https://containo.us/blog/traefik-2-0-docker-101-fc2893944b9d/
+
+
 
 Game HTML5
 https://github.com/CreateJS/EaselJS

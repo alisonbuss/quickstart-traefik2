@@ -1,74 +1,70 @@
+
+# @Description: An example of Docker Compose that
+# goes up a Traefik service and a Go application.
+# @Fonts:
+#   - https://docs.docker.com/compose/compose-file/
+#   - https://docs.docker.com/network/
+#   - https://docs.docker.com/storage/volumes/
+#   - https://docs.traefik.io/providers/docker/
+#   - https://docs.traefik.io/providers/file/
+#   - https://docs.traefik.io/reference/static-configuration/overview/
+#   - https://docs.traefik.io/reference/dynamic-configuration/file/
+#   - https://docs.traefik.io/user-guides/docker-compose/acme-http/
+#   - https://docs.traefik.io/operations/dashboard/
+#   - https://docs.traefik.io/observability/logs/
+#   - https://docs.traefik.io/observability/access-logs/
+
+# Compose and Docker compatibility matrix.
+# Compose file format: 3.7
+# Docker Engine release: 18.06.0+
 version: "3.7"
 
-volumes:
-  vol_certificates:
-    name: quickstart_traefik2_vol_certificates
-    driver: local
-    driver_opts:
-      type: none
-      # It is necessary that this directory already exists!
-      device: ${PWD}/volumes/certificates
-      o: bind
-
+# Defining a local network with the DRIVER(bridge).
 networks:
   network_local:
     external: false
 
+# Defining container services for Compose.
 services:
+  # Defining a reverse proxy service using Traefik.
   reverse_proxy:
-    image: traefik:v2.1.1 # The official Treafik docker image
-    command:
-      - "--api.dashboard=true"
-      - "--providers.docker=true"
-      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=network_local"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.letsencryptresolver.acme.email=you-email@domain.com"
-      - "--certificatesresolvers.letsencryptresolver.acme.storage=/etc/traefik/letsencrypt/acme.json"
-      - "--log.level=DEBUG"
-      - "--log.format=common"
-      - "--log.filePath=/var/log/traefik/traefik.log"
-      - "--accesslog=true"
-      - "--accesslog.filepath=/var/log/traefik/access-log"
+    image: traefik:v2.1.1 # The official Treafik docker image.
     labels:
-      # 
+      # Explicitly tell Traefik to expose this container.
       - "traefik.enable=true"
-      # 
-      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
-      - "traefik.http.routers.http-catchall.entrypoints=web"
-      - "traefik.http.routers.http-catchall.middlewares=redirect-https@docker"
-      - "traefik.http.routers.http-catchall.priority=1"
-      - "traefik.http.middlewares.redirect-https.redirectscheme.scheme=https"
-      #
-      - "traefik.http.routers.api.rule=Host(`traefik.docker.localhost`)"
-      - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.routers.api.middlewares=auth"
-      - "traefik.http.routers.api.priority=2"
-      - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/"
     restart: unless-stopped
     volumes:
+      # Define Docker socket access, read only.
+      # So that Traefik can listen to the Docker events
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "vol_certificates:/etc/traefik/letsencrypt"
+      # Traefik configuration files (API, providers,
+      # certificates, routers, middlewares, services).
+      - "./files/traefik-conf:/etc/traefik"
     ports:
-      - "80:80" # The HTTP port
-      - "443:443" # The HTTPS port
-      - "8080:8080" # The Web UI (Enabled by --api)
+      - "80:80" # The HTTP port.
+      - "443:443" # The HTTPS port.
+      - "8080:8080" # The Web UI (Enabled by --api).
     networks:
       - network_local
 
+  # Tiny Go webserver that prints os information
+  # and HTTP request to output.
   whoami:
-    image: containous/whoami
+    image: containous/whoami # The official Containous docker image.
+    # Define service dependencies.
     depends_on:
       - reverse_proxy
     labels:
+      # Explicitly tell Traefik to expose this container.
       - "traefik.enable=true"
+      # The domain the service will respond to.
       - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+      # Allow request only from the predefined entry point named "websecure"
       - "traefik.http.routers.whoami.entrypoints=websecure"
+      # Define certificate generation based on routers Host & HostSNI rules.
       - "traefik.http.routers.whoami.tls.certresolver=letsencryptresolver"
+      # Tell Traefik to use the port 80 to connect to `whoami`
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
     restart: unless-stopped
     networks:
       - network_local
