@@ -7,6 +7,43 @@
 
 
 
+## Example diagram:
+
+<p align="center">
+    <img src="https://github.com/alisonbuss/quickstart-traefik2/raw/master/files/example-diagram.png"/>
+</p>
+
+
+
+
+## Project Files:
+
+```text
+.
+├── files
+│   ├── example-diagram.png
+│   ├── print-docker-compose.png
+│   ├── print-docker-swarm.png
+│   └── traefik-conf
+│       ├── authorized-users
+│       │   └── usersfile
+│       ├── dynamic-conf
+│       │   └── traefik_dynamic_conf.yml
+│       ├── letsencrypt
+│       │   └── acme.json
+│       └── traefik.yml
+├── stack-compose
+│   ├── stack-compose.app.yml
+│   └── stack-compose.traefik.yml
+├── docker-compose.yml
+├── LICENSE
+├── Makefile
+├── README_LANG_EN.md
+└── README.md
+```
+
+
+
 
 ## Install Environment:
 
@@ -35,7 +72,7 @@ usermod -aG docker $USER;
 ## In Docker Swarm:
 
 <p align="center">
-    <img src="https://github.com/alisonbuss/quickstart-traefik2/raw/master/files/print-swarm.png"/>
+    <img src="https://github.com/alisonbuss/quickstart-traefik2/raw/master/files/print-docker-swarm.png"/>
 </p>
 
 ```bash
