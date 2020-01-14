@@ -38,7 +38,6 @@ usermod -aG docker $USER;
     <img src="https://github.com/alisonbuss/quickstart-traefik2/raw/master/files/print-swarm.png"/>
 </p>
 
-
 ```bash
 docker image ls && docker network ls && docker volume ls && docker container ls;
 
@@ -51,20 +50,22 @@ docker service ls;
 docker network create --driver=overlay network_swarm_public;
 docker network create --driver=overlay network_swarm_private;
 
+mkdir -p ./volumes/shared;
 docker volume create --name volume_swarm_shared \
     --driver local \
     --opt type=none \
     --opt device=./volumes/shared \
     --opt o=bind;
 
+mkdir -p ./volumes/certificates;
 docker volume create --name volume_swarm_certificates \
     --driver local \
     --opt type=none \
     --opt device=./volumes/certificates \
     --opt o=bind;
 
-docker stack deploy --compose-file ./swarm-compose/swarm-compose.traefik.yml traefik;
-docker stack deploy --compose-file ./swarm-compose/swarm-compose.app.yml app;
+docker stack deploy --compose-file ./stack-compose/stack-compose.traefik.yml traefik;
+docker stack deploy --compose-file ./stack-compose/stack-compose.app.yml app;
 
 docker service ls;
 
@@ -88,8 +89,9 @@ echo "127.0.1.1       whoami.swarm.localhost" >> /etc/hosts;
 docker stack rm traefik;
 docker stack rm app;
 
-docker volume rm volume_swarm_shared;
-docker volume rm volume_swarm_certificates;
+docker volume rm --force volume_swarm_shared;
+docker volume rm --force volume_swarm_certificates;
+rm -rf ./volumes;
 
 docker system prune -a;
 
@@ -104,7 +106,6 @@ docker system prune -a;
     <img src="https://github.com/alisonbuss/quickstart-traefik2/raw/master/files/print-docker-compose.png"/>
 </p>
 
-
 ```bash
 docker image ls && docker network ls && docker volume ls && docker container ls;
 
@@ -116,6 +117,8 @@ docker-compose --file ./docker-compose.yml build;
 
 docker-compose --file ./docker-compose.yml up -d;
 
+docker-compose --file ./docker-compose.yml ps;
+
 curl -H Host:whoami.docker.localhost https://127.0.0.1 --insecure;
 
 # Browser Test:
@@ -123,14 +126,6 @@ curl -H Host:whoami.docker.localhost https://127.0.0.1 --insecure;
 # Open: https://whoami.docker.localhost/
 
 docker-compose --file ./docker-compose.yml stop;
-
-docker-compose --file ./docker-compose.yml start;
-
-docker-compose --file ./docker-compose.yml restart;
-
-docker-compose --file ./docker-compose.yml down;
-
-docker-compose --file ./docker-compose.yml ps;
 
 docker-compose --file ./docker-compose.yml rm -f;
 
