@@ -1,67 +1,125 @@
 
-# Quickstart of a reverse proxy service using Traefik(v2.*) with Docker Compose and Swarm.
-
 #### Translation for: **[English](https://github.com/alisonbuss/quickstart-traefik2/blob/master/README_LANG_EN.md)**.
 
-#### Project Status: *(Development)*.
+# Quickstart de um serviço de proxy reverso usando Traefik(v2. *), com Docker Compose e Swarm.
+
+#### Status do Projeto: *(Finalizado)*.
 
 
+### Projeto foi Inspirado:
 
-## Example diagram:
+  - *Live(Descomplicando o Docker - Aula ao vivo sobre Traefik) com [Jeferson Noronha](https://www.linkedin.com/in/jefersonfernando/) do [Canal LINUXtips](https://www.youtube.com/user/linuxtipscanal/) no Youtube e com participação de [Rafael Gomes(Gomex)](https://gomex.me/).*
+  - *Playlist([Modo swarm do Docker usando o Traefik como proxy reverso](https://www.youtube.com/playlist?list=PLCCxPxhBWBUOjG16IYXRQJZCWKkC-vVX8)) do Canal [Marcelo Franco](https://www.youtube.com/channel/UC7-HcNHVyIZ2nQ2FhAhOtPA) no Youtube.*
+
+
+### Dependências:
+
+* **[[Docker](https://docs.docker.com/engine/docker-overview/)]** 18.09.6 ou superior...
+* **[[Docker Compose](https://docs.docker.com/compose/)]** 1.24.0 ou superior...
+* **[[GNU Make](https://www.gnu.org/software/make/)]** 4.1 ou superior...
+
+> **Nota:**
+> - *É necessário ter instalado as dependências citadas acima, para que o projeto funcione.*
+> - *A execução desse projeto foi feita através de um **Desktop Ubuntu 19.04 (Dingo)**.*
+
+
+### Documentação de apoio:
+
+* **[Docker Compose File](https://docs.docker.com/compose/compose-file/)**.
+* **[Docker - Networking](https://docs.docker.com/network/)**.
+* **[Docker - Volumes](https://docs.docker.com/storage/volumes/)**.
+* **[Docker - Create a swarm](https://docs.docker.com/engine/swarm/swarm-tutorial/create-swarm/)**.
+* **[Docker - Deploy a stack to a swarm](https://docs.docker.com/engine/swarm/stack-deploy/)**.
+* **[Traefik & Docker](https://docs.traefik.io/providers/docker/)**.
+* **[Traefik & Configuration Introduction](https://docs.traefik.io/getting-started/configuration-overview/)**.
+* **[Traefik & File](https://docs.traefik.io/providers/file/)**.
+* **[Traefik & Static configuration with files](https://docs.traefik.io/reference/static-configuration/file/)**.
+* **[Traefik & Dynamic configuration with files](https://docs.traefik.io/reference/dynamic-configuration/file/)**.
+* **[Traefik & HTTPS with Let's Encrypt](https://docs.traefik.io/user-guides/docker-compose/acme-http/)**.
+* **[Traefik & The Dashboard](https://docs.traefik.io/operations/dashboard/)**.
+* **[Traefik & Observability Logs](https://docs.traefik.io/observability/logs/)**.
+* **[Traefik & Observability Access Logs](https://docs.traefik.io/observability/access-logs/)**.
+
+
+### Objetivo:
+
+Fornecer um projeto de exemplo de proxy reverso e balanceador de carga para aplicativos baseados em HTTP e TCP.
+
+O projeto fornece os seguintes recursos:
+
+* *Dashboard do Treafik*.
+* *SSL automático com ACME (Let's Encrypt)*.
+* *Entrypoints para porta 80/443(http/https)*.
+* *Service para balanceador de carga*.
+* *Router para websecure em https*.
+* *Router para o dashboard do Treafik em http*.
+* *Middleware para redirecionar https*.
+* *Middleware para autenticação de usuário e senha*.
+* *Logs do Traefik*.
+* *Logs de acessos do Traefik*.
+
+
+### Diagrama:
 
 <p align="center">
     <img src="https://github.com/alisonbuss/quickstart-traefik2/raw/master/files/example-diagram.png"/>
 </p>
 
 
-
-
-## Project Files:
+## Arquivos:
 
 ```text
 .
-├── files
+├── files..................................Arquivos do projeto.
 │   ├── example-diagram.png
 │   ├── print-docker-compose.png
 │   ├── print-docker-swarm.png
-│   └── traefik-conf
-│       ├── authorized-users
-│       │   └── usersfile
-│       ├── dynamic-conf
-│       │   └── traefik_dynamic_conf.yml
-│       ├── letsencrypt
-│       │   └── acme.json
-│       └── traefik.yml
-├── stack-compose
-│   ├── stack-compose.app.yml
-│   └── stack-compose.traefik.yml
-├── docker-compose.yml
-├── LICENSE
-├── Makefile
-├── README_LANG_EN.md
-└── README.md
+│   └── traefik-conf.......................Pasta de configurações do Traefik.
+│       ├── authorized-users
+│       │   └── usersfile..................Arquivo contendo usuários de acesso ao Dashboard do Traefik.
+│       ├── dynamic-conf...................Pasta contendo os arquivos de configuração dinâmica.
+│       │   └── traefik_dynamic_conf.yml
+│       ├── letsencrypt....................Pasta contendo certificados TLS, para configuração dinâmica ou através do Let's Encrypt (ACME).
+│       │   └── acme.json
+│       └── traefik.yml....................Arquivo de configuração estática do Traefik.
+├── stack-compose..........................Pasta contendo arquivos(Compose do Swarm) para implantar os serviços.
+│   ├── stack-compose.app.yml
+│   └── stack-compose.traefik.yml
+├── docker-compose.yml.....................Arquivo de exemplo de um serviço Traefik para o modo Docker Compose.
+├── LICENSE................................Licença (MIT).
+├── Makefile...............................Arquivo principal de start do projeto "$ make help".
+├── README_LANG_EN.md......................Arquivo de tradução do README.md.
+└── README.md..............................Documentação Geral do Projeto.
 ```
 
 
+## Preparar e Instalar o Ambiente:
 
-
-## Install Environment:
+Instalar o Docker e Docker Compose no Desktop/Server Ubuntu.
 
 ```bash
+# Definir Host.
 hostname "node01";
 echo "node01" > /etc/hostname;
+echo "127.0.1.1       node01" >> /etc/hosts;
 
+# Iniciar Atualização.
 apt-get update;
 
+# Instalar o Docker mais atual.
 curl -fsSL https://get.docker.com | bash;
 
+# Instalar o Docker Compose.
 curl -L "https://github.com/docker/compose/releases/download/1.25.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose;
 chmod +x /usr/local/bin/docker-compose;
 
+# Verificar Versão Docker.
 docker version;
 
+# Verificar Versão Docker Compose.
 docker-compose version;
 
+# Dar permissão de execução ao usuário.
 usermod -aG docker $USER;
 
 ```
