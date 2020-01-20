@@ -17,7 +17,7 @@
 * **[[GNU Make](https://www.gnu.org/software/make/)]** 4.1 ou superior...
 
 > **Nota:**
-> - *É necessário ter instalado as dependências citadas acima, para que o projeto funcione.*
+> - *É necessário ter instalado as dependências citadas a cima, para que o projeto funcione.*
 > - *A execução desse projeto foi feita através de um **Desktop Ubuntu 19.04 (Dingo)**.*
 
 ### Documentação de apoio:
@@ -43,12 +43,12 @@ Fornecer um projeto de exemplo de proxy reverso e balanceador de carga para apli
 
 O projeto fornece os seguintes recursos:
 
-* *Dashboard do Treafik*.
+* *Dashboard do Traefik*.
 * *SSL automático com ACME (Let's Encrypt)*.
 * *Entrypoints para porta 80/443(http/https)*.
 * *Service para balanceador de carga*.
 * *Router para websecure em https*.
-* *Router para o dashboard do Treafik em http*.
+* *Router para o dashboard do Traefik em http*.
 * *Middleware para redirecionar https*.
 * *Middleware para autenticação de usuário e senha*.
 * *Logs do Traefik*.
@@ -61,6 +61,9 @@ O projeto fornece os seguintes recursos:
 </p>
 
 ### Configurações do Traefik:
+
+Texto original:
+[Traefik Docs - Configuration Introduction](https://docs.traefik.io/getting-started/configuration-overview/)
 
 #### A configuração no Traefik pode se referir de duas formas diferentes:
 
@@ -112,8 +115,8 @@ Você pode substituir o arquivo de configuração passando o argumento configFil
     traefik --configFile=/etc/traefik/custom_traefik.toml
 
 > **Nota:**
-> - No arquivo(**./docker-compose.yml**) a configuração do Traefik está no mode **ARQUIVO** apontando para a pasta(**./files/traefik-conf**).
-> - No arquivo(**./stack-compose/stack-compose.traefik.yml**) a configuração do Traefik está no mode **LABELS** e **COMMAND**.
+> - No arquivo(**./docker-compose.yml**) a configuração do Traefik está no modo **ARQUIVO** apontando para a pasta(**./files/traefik-conf**).
+> - No arquivo(**./stack-compose/stack-compose.traefik.yml**) a configuração do Traefik está no modo **LABELS** e **COMMAND**.
 
 ### Arquivos:
 
@@ -131,7 +134,7 @@ Você pode substituir o arquivo de configuração passando o argumento configFil
 │       ├── letsencrypt....................Pasta contendo certificados TLS, para configuração dinâmica ou através do Let's Encrypt (ACME).
 │       │   └── acme.json
 │       └── traefik.yml....................Arquivo de configuração estática do Traefik.
-├── stack-compose..........................Pasta contendo arquivos(Compose do Swarm) para implantar os serviços.
+├── stack-compose..........................Pasta contendo arquivos(Compose do Swarm) para implantar serviços.
 │   ├── stack-compose.app.yml
 │   └── stack-compose.traefik.yml
 ├── docker-compose.yml.....................Arquivo de exemplo de um serviço Traefik para o modo Docker Compose.
@@ -141,7 +144,7 @@ Você pode substituir o arquivo de configuração passando o argumento configFil
 └── README.md..............................Documentação Geral do Projeto.
 ```
 
-## Preparar e Instalar o Ambiente:
+### Preparar e Instalar o Ambiente:
 
 Instalar o Docker e Docker Compose no Desktop/Server Ubuntu.
 
@@ -177,56 +180,38 @@ usermod -aG docker "YourUser";
 
 ### Deploy no modo Docker Swarm:
 
-No mode Swarm desse projeto, há duas formas de rodar o deploy de um serviço Traefik:
+Antes de prosseguir com o Deploy dos serviços, precisamos ativar o modo Swarm no Desktop/Server Ubuntu.
 
-1. Modo manual e tediosa.
-2. Modo automatizado e simples.
-
-#### No modo automatizado:
-
-O mode automatizado é executado a partir de um **Makefile**:
-
-    $ make help
-
-Para rodar os serviços:
-
-    $ make network-create volume-create stack-deploy
-
-Para obter informações gerais do Swarm:
-
-    $ make info
-
-Testar os serviços:
-
-* Para testar o Dashboard do Traefik, abra o Navegador Web e acesse o endereço [http://traefik.swarm.localhost/dashboard/](http://traefik.swarm.localhost/dashboard/) a pagina vai pedir um ***USUÁRIO*** e ***SENHA*** digite **test**
-* Para testar o Aplicação, abra o Navegador Web e acesse o endereço [https://whoami.swarm.localhost/](https://whoami.swarm.localhost/)
-
-<p align="center">
-    <img src="https://github.com/alisonbuss/quickstart-traefik2/raw/master/files/print-docker-swarm.png"/>
-</p>
-
-Para destruir os serviços:
-
-    $ make stack-remove network-remove volume-remove
-
-#### No modo manual:
-
-Executando os seguintes comandos:
+Para ativar o modo Swarm na maquina, siga com os comandos abaixo:
 
 ```bash
-# Imprimir informações gerais do ambiente Docker.
-docker image ls && docker network ls && docker volume ls && docker container ls;
-
-# Habilitar mode Swarm na maquina.
+# Habilitar modo Swarm na maquina.
+# Essa maquina vai ser seu Manager(O nó mestre).
+# Adicione argumento(--advertise-addr) passando IP da maquina. 
 docker swarm init --advertise-addr 192.168.0.16;
 
-# Imprimir todos os nodes do modo Swarm.
+# Listar todos os hosts ingressados ao Swarm.
 docker node ls;
 
-# Imprimir todos os serviços do modo Swarm.
+```
+
+No modo Swarm desse projeto, há duas formas de rodar o deploy de um serviço Traefik:
+
+1. Na forma manual.
+2. Na forma automatizada.
+
+#### Na forma manual:
+
+Para rodar o deploy no mode Swarm, siga com os comandos abaixo:
+
+```bash
+# Exibir informações gerais do ambiente Docker.
+docker image ls && docker network ls && docker volume ls && docker container ls;
+
+# Listar todos os serviços do Swarm.
 docker service ls;
 
-# Criar redes do tipo overlay para o modo Swarm.
+# Criar redes do tipo overlay para ser usando no Swarm.
 docker network create --driver=overlay network_swarm_public;
 docker network create --driver=overlay network_swarm_private;
 
@@ -252,20 +237,20 @@ docker stack deploy --compose-file ./stack-compose/stack-compose.traefik.yml tra
 # Rodar uma stack de uma aplicação de teste:
 docker stack deploy --compose-file ./stack-compose/stack-compose.app.yml app;
 
-# Imprimir todos os serviços do modo Swarm.
+# Listar todos os serviços do Swarm.
 docker service ls;
 
-# Exibir logs de um contêiner ou serviço.
+# Exibir logs de um serviço(Traefik) do Swarm.
 docker service logs traefik_reverse_proxy;
 
-# Imprimir todos os contêiner.
+# Listar todos os contêiner.
 docker ps;
 
 # Imprimir a versão do Traefik em atividade.
-docker exec <"OBTENHA O ID DO COMANDO ANTERIOR"> traefik version;
+docker exec <"OBTENHA O ID DO CONTÊINER TRAEFIK"> traefik version;
 
-# Imprimir o log do Traefik em atividade.
-docker exec <"ID DE UM DETERMINADO CONTÊINER"> cat /var/log/traefik/traefik.log;
+# Exibir o log do Traefik em atividade.
+docker exec <"OBTENHA O ID DO CONTÊINER TRAEFIK"> cat /var/log/traefik/traefik.log;
 
 # Testar se a aplicação está funcionando.
 curl -H Host:whoami.swarm.localhost https://127.0.0.1 --insecure;
@@ -276,7 +261,16 @@ echo "127.0.1.1       whoami.swarm.localhost" >> /etc/hosts;
 
 ```
 
-Destruir todos os serviços, network, volumes e imagens:
+#### Testar os serviços via Bowser:
+
+* Para testar o Dashboard do Traefik, abra o Navegador Web e acesse o endereço [http://traefik.swarm.localhost/dashboard/](http://traefik.swarm.localhost/dashboard/) a pagina vai pedir um ***USUÁRIO*** e ***SENHA*** digite **test**
+* Para testar o Aplicação, abra o Navegador Web e acesse o endereço [https://whoami.swarm.localhost/](https://whoami.swarm.localhost/)
+
+<p align="center">
+    <img src="https://github.com/alisonbuss/quickstart-traefik2/raw/master/files/print-docker-swarm.png"/>
+</p>
+
+Para destruir todos os serviços, network, volumes e imagens:
 
 ```bash
 # Remove stack do Swarm.
@@ -288,27 +282,48 @@ docker volume rm --force volume_swarm_shared;
 docker volume rm --force volume_swarm_certificates;
 rm -rf ./volumes;
 
-# Remove todos os contêineres parados, redes não utilizadas, imagens pendentes e caches de compilação...
+# DANDO UMA LIMPADA NO AMBIENTE:
+# Esse comando remove todos os contêineres parados, redes não utilizadas, imagens pendentes e caches de compilação...
 # É o satanais!!!
 docker system prune -a;
 
 ```
 
+#### Na forma automatizada:
+
+O modo automatizado é executado a partir de um **Makefile**:
+
+    $ make help
+
+Para rodar os serviços:
+
+    $ make network-create volume-create stack-deploy
+
+Para obter informações gerais do Swarm:
+
+    $ make info
+
+Para destruir os serviços:
+
+    $ make stack-remove network-remove volume-remove
+
+
 ## Deploy no modo Docker Compose:
 
+Para rodar o deploy no mode Docker Compose, siga com os comandos abaixo:
 
 ```bash
-# Imprimir informações gerais do ambiente Docker.
+# Exibir informações gerais do ambiente Docker.
 docker image ls && docker network ls && docker volume ls && docker container ls;
 
 # Valide e visualize o arquivo de composição.
 docker-compose --file ./docker-compose.yml config;
 
-# Criar ou reconstruir serviços.
-docker-compose --file ./docker-compose.yml build;
+# Criar ou reconstruir serviços e construa imagens em paralelo.
+docker-compose --file ./docker-compose.yml build --parallel;
 
-# Criar e start os containers.
-docker-compose --file ./docker-compose.yml up --build --detach;
+# Criar ou reconstruir serviços no modo desanexado.
+docker-compose --file ./docker-compose.yml up --detach;
 
 # Lista todos os containers do Compose.
 docker-compose --file ./docker-compose.yml ps;
@@ -324,97 +339,79 @@ curl -H Host:whoami.docker.localhost https://127.0.0.1 --insecure;
 
 ```
 
-Testar os serviços:
+#### Testar os serviços via Bowser:
 
 * Para testar o Dashboard do Traefik, abra o Navegador Web e acesse o endereço [http://traefik.docker.localhost/dashboard/](http://traefik.docker.localhost/dashboard/) a pagina vai pedir um ***USUÁRIO*** e ***SENHA*** digite **test**
 * Para testar o Aplicação, abra o Navegador Web e acesse o endereço [https://whoami.docker.localhost/](https://whoami.docker.localhost/)
-
 
 <p align="center">
     <img src="https://github.com/alisonbuss/quickstart-traefik2/raw/master/files/print-docker-compose.png"/>
 </p>
 
-Destruir todos os serviços, network, volumes e imagens:
-
+Para destruir todos os serviços, network, volumes e imagens:
 
 ```bash
 # Parar e remover contêineres, redes, imagens e volumes.
 docker-compose --file ./docker-compose.yml down;
 docker-compose --file ./docker-compose.yml rm -f;
 
-# Remove todos os contêineres parados, redes não utilizadas, imagens pendentes e caches de compilação...
+# DANDO UMA LIMPADA NO AMBIENTE:
+# Esse comando remove todos os contêineres parados, redes não utilizadas, imagens pendentes e caches de compilação...
 # É o satanais!!!
 docker system prune -a;
 
-# Remove tudo!!!
-docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(docker images -q) && docker system prune -a;
+## OU...
+docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(docker images -q);
 
 ```
 
+### Referências:
 
+* Docker - Official Site, Docker Documentation. ***Docker overview*** <br/>
+  Acessado: *Dezembro de 2020* <br/>
+  Disponível: *[https://docs.docker.com/engine/docker-overview/](https://docs.docker.com/engine/docker-overview/)*
 
-### References:
+* Docker Compose - Official Site, Docker Compose Documentation. ***Docker Compose File*** <br/>
+  Acessado: *Dezembro de 2020* <br/>
+  Disponível: *[https://docs.docker.com/compose/compose-file/](https://docs.docker.com/compose/compose-file/)*
 
-https://creekorful.me/how-to-expose-traefik-2-dashboard-securely-docker-swarm/
+* Traefik - Official Site, Traefik Documentation. ***Configuration Introduction - How the Magic Happens*** <br/>
+  Acessado: *Dezembro de 2020* <br/>
+  Disponível: *[https://docs.traefik.io/getting-started/configuration-overview/](https://docs.traefik.io/getting-started/configuration-overview/)*
 
-https://semaphoreci.com/community/tutorials/running-applications-on-a-docker-swarm-mode-cluster
+* Marcelo Franco, YouTube, Playlist. ***Modo swarm do Docker usando o Traefik como proxy reverso*** <br/>
+  Acessado: *Dezembro de 2020*. <br/>
+  Disponível: *[https://www.youtube.com/channel/UC7-HcNHVyIZ2nQ2FhAhOtPA/](https://www.youtube.com/channel/UC7-HcNHVyIZ2nQ2FhAhOtPA/)*.
 
-https://containo.us/blog/traefik-2-0-docker-101-fc2893944b9d/
+* Aloïs Micard, Tech blog. ***How to expose Traefik 2.x dashboard securely on Docker Swarm*** <br/>
+  Acessado: *Janeiro de 2020*. <br/>
+  Disponível: *[https://creekorful.me/how-to-expose-traefik-2-dashboard-securely-docker-swarm/](https://creekorful.me/how-to-expose-traefik-2-dashboard-securely-docker-swarm/)*.
 
+* Nigel Brown, Semaphore blog. ***Running Applications on a Docker Swarm Mode Cluster*** <br/>
+  Acessado: *Janeiro de 2020*. <br/>
+  Disponível: *[https://semaphoreci.com/community/tutorials/running-applications-on-a-docker-swarm-mode-cluster/](https://semaphoreci.com/community/tutorials/running-applications-on-a-docker-swarm-mode-cluster/)*.
 
+* Gerald Croes e Ludovic Fernandez, Containo blog. ***Traefik 2.0 & Docker 101*** <br/>
+  Acessado: *Janeiro de 2020*. <br/>
+  Disponível: *[https://containo.us/blog/traefik-2-0-docker-101-fc2893944b9d/](https://containo.us/blog/traefik-2-0-docker-101-fc2893944b9d/)*.
 
-Game HTML5
-https://github.com/CreateJS/EaselJS
-https://github.com/CreateJS/EaselJS/tree/master/examples/Game
-https://www.codementor.io/@yomateo/matthewdavis.io
+* Gerald Croes, Containo blog. ***Traefik 2 & TLS 101*** <br/>
+  Acessado: *Janeiro de 2020*. <br/>
+  Disponível: *[https://containo.us/blog/traefik-2-tls-101-23b4fbee81f1/](https://containo.us/blog/traefik-2-tls-101-23b4fbee81f1/)*.
 
+* Tim Kamanin, Blog. ***Docker compose and Traefik example configuration (domain name + SSL certificate)*** <br/>
+  Acessado: *Dezembro de 2020*. <br/>
+  Disponível: *[https://timonweb.com/tutorials/an-example-of-docker-compose-and-traefik-config-domain-name-ssl-certificate/](https://timonweb.com/tutorials/an-example-of-docker-compose-and-traefik-config-domain-name-ssl-certificate/)*.
 
-https://www.youtube.com/watch?v=bsGkIKP1OZ4&fbclid=IwAR3joJ6n6pFvpOHcJsy_KXUtginsZ43yDivP1tdzLebWqzJL_6lW3ByV1G0
+* Juan Treminio, Blog. ***Traefik on Docker for Web Developers With bonus Let's Encrypt SSL!*** <br/>
+  Acessado: *Dezembro de 2020*. <br/>
+  Disponível: *[https://jtreminio.com/blog/traefik-on-docker-for-web-developers/](https://jtreminio.com/blog/traefik-on-docker-for-web-developers/)*.
 
-https://containo.us/blog/traefik-2-tls-101-23b4fbee81f1/
-https://docs.traefik.io/migration/v1-to-v2/
-https://timonweb.com/tutorials/an-example-of-docker-compose-and-traefik-config-domain-name-ssl-certificate/
+* William Oliveira, Blog. ***COMANDOS MAIS UTILIZADOS NO DOCKER*** <br/>
+  Acessado: *Dezembro de 2020*. <br/>
+  Disponível: *[https://woliveiras.com.br/posts/comandos-mais-utilizados-no-docker/](https://woliveiras.com.br/posts/comandos-mais-utilizados-no-docker/)*.
 
-
-
-https://blog.codeship.com/using-docker-compose-for-python-development/
-
-https://docs.docker.com/compose/gettingstarted/
-
-
-https://runnable.com/docker/python/docker-compose-with-flask-apps
-
-https://pyinstaller.readthedocs.io/en/stable/
-
-https://github.com/python/cpython
-
-https://www.youtube.com/watch?v=LMsLJBmh654&list=PLucm8g_ezqNrrtduPx7s4BM8phepMn9I2&index=6
-
-https://www.youtube.com/watch?v=Gojqw9BQ5qY
-
-https://www.youtube.com/playlist?list=PLHz_AreHm4dlKP6QQCekuIPky1CiwmdI6
-
-
-https://realpython.com/flask-connexion-rest-api/
-
-https://realpython.com/api-integration-in-python/
-
-https://www.codementor.io/@sagaragarwal94/building-a-basic-restful-api-in-python-58k02xsiq
-
-https://code.tutsplus.com/pt/tutorials/building-restful-apis-with-flask-diy--cms-26625
-
-
-
-https://mundevops.wordpress.com/2017/03/29/removendo-containers-e-imagens-do-docker/
-
-https://woliveiras.com.br/posts/comandos-mais-utilizados-no-docker/
-
-
-
-https://jtreminio.com/blog/traefik-on-docker-for-web-developers/
-
-
-### License
+### Licença
 
 [<img width="190" src="https://raw.githubusercontent.com/alisonbuss/my-licenses/master/files/logo-open-source-550x200px.png">](https://opensource.org/licenses)
 [<img width="166" src="https://raw.githubusercontent.com/alisonbuss/my-licenses/master/files/icon-license-mit-500px.png">](https://github.com/alisonbuss/quickstart-traefik2/blob/master/LICENSE)
