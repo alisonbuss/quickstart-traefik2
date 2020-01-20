@@ -26,6 +26,12 @@
 * **[Traefik & Observability Logs](https://docs.traefik.io/observability/logs/)**.
 * **[Traefik & Observability Access Logs](https://docs.traefik.io/observability/access-logs/)**.
 
+### Diagram:
+
+<p align="center">
+    <img src="https://github.com/alisonbuss/quickstart-traefik2/raw/master/files/example-diagram.png"/>
+</p>
+
 ### Traefik Configuration:
 
 Original text:
@@ -79,12 +85,6 @@ At startup, Traefik searches for a file named traefik.toml (or traefik.yml or tr
 You can override this using the configFile argument:
 
     traefik --configFile=/etc/traefik/custom_traefik.toml
-
-### Diagram:
-
-<p align="center">
-    <img src="https://github.com/alisonbuss/quickstart-traefik2/raw/master/files/example-diagram.png"/>
-</p>
 
 ### Files:
 
@@ -299,47 +299,47 @@ docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(d
 
 * Docker - Official Site, Docker Documentation. ***Docker overview*** <br/>
   Accessed: *December de 2020* <br/>
-  Disponível: *[https://docs.docker.com/engine/docker-overview/](https://docs.docker.com/engine/docker-overview/)*
+  Available: *[https://docs.docker.com/engine/docker-overview/](https://docs.docker.com/engine/docker-overview/)*
 
 * Docker Compose - Official Site, Docker Compose Documentation. ***Docker Compose File*** <br/>
   Accessed: *December de 2020* <br/>
-  Disponível: *[https://docs.docker.com/compose/compose-file/](https://docs.docker.com/compose/compose-file/)*
+  Available: *[https://docs.docker.com/compose/compose-file/](https://docs.docker.com/compose/compose-file/)*
 
 * Traefik - Official Site, Traefik Documentation. ***Configuration Introduction - How the Magic Happens*** <br/>
   Accessed: *December de 2020* <br/>
-  Disponível: *[https://docs.traefik.io/getting-started/configuration-overview/](https://docs.traefik.io/getting-started/configuration-overview/)*
+  Available: *[https://docs.traefik.io/getting-started/configuration-overview/](https://docs.traefik.io/getting-started/configuration-overview/)*
 
 * Marcelo Franco, YouTube, Playlist. ***Modo swarm do Docker usando o Traefik como proxy reverso*** <br/>
   Accessed: *December de 2020*. <br/>
-  Disponível: *[https://www.youtube.com/channel/UC7-HcNHVyIZ2nQ2FhAhOtPA/](https://www.youtube.com/channel/UC7-HcNHVyIZ2nQ2FhAhOtPA/)*.
+  Available: *[https://www.youtube.com/channel/UC7-HcNHVyIZ2nQ2FhAhOtPA/](https://www.youtube.com/channel/UC7-HcNHVyIZ2nQ2FhAhOtPA/)*.
 
 * Aloïs Micard, Tech blog. ***How to expose Traefik 2.x dashboard securely on Docker Swarm*** <br/>
   Accessed: *January de 2020*. <br/>
-  Disponível: *[https://creekorful.me/how-to-expose-traefik-2-dashboard-securely-docker-swarm/](https://creekorful.me/how-to-expose-traefik-2-dashboard-securely-docker-swarm/)*.
+  Available: *[https://creekorful.me/how-to-expose-traefik-2-dashboard-securely-docker-swarm/](https://creekorful.me/how-to-expose-traefik-2-dashboard-securely-docker-swarm/)*.
 
 * Nigel Brown, Semaphore blog. ***Running Applications on a Docker Swarm Mode Cluster*** <br/>
   Accessed: *January de 2020*. <br/>
-  Disponível: *[https://semaphoreci.com/community/tutorials/running-applications-on-a-docker-swarm-mode-cluster/](https://semaphoreci.com/community/tutorials/running-applications-on-a-docker-swarm-mode-cluster/)*.
+  Available: *[https://semaphoreci.com/community/tutorials/running-applications-on-a-docker-swarm-mode-cluster/](https://semaphoreci.com/community/tutorials/running-applications-on-a-docker-swarm-mode-cluster/)*.
 
 * Gerald Croes e Ludovic Fernandez, Containo blog. ***Traefik 2.0 & Docker 101*** <br/>
   Accessed: *January de 2020*. <br/>
-  Disponível: *[https://containo.us/blog/traefik-2-0-docker-101-fc2893944b9d/](https://containo.us/blog/traefik-2-0-docker-101-fc2893944b9d/)*.
+  Available: *[https://containo.us/blog/traefik-2-0-docker-101-fc2893944b9d/](https://containo.us/blog/traefik-2-0-docker-101-fc2893944b9d/)*.
 
 * Gerald Croes, Containo blog. ***Traefik 2 & TLS 101*** <br/>
   Accessed: *January de 2020*. <br/>
-  Disponível: *[https://containo.us/blog/traefik-2-tls-101-23b4fbee81f1/](https://containo.us/blog/traefik-2-tls-101-23b4fbee81f1/)*.
+  Available: *[https://containo.us/blog/traefik-2-tls-101-23b4fbee81f1/](https://containo.us/blog/traefik-2-tls-101-23b4fbee81f1/)*.
 
 * Tim Kamanin, Blog. ***Docker compose and Traefik example configuration (domain name + SSL certificate)*** <br/>
   Accessed: *December de 2020*. <br/>
-  Disponível: *[https://timonweb.com/tutorials/an-example-of-docker-compose-and-traefik-config-domain-name-ssl-certificate/](https://timonweb.com/tutorials/an-example-of-docker-compose-and-traefik-config-domain-name-ssl-certificate/)*.
+  Available: *[https://timonweb.com/tutorials/an-example-of-docker-compose-and-traefik-config-domain-name-ssl-certificate/](https://timonweb.com/tutorials/an-example-of-docker-compose-and-traefik-config-domain-name-ssl-certificate/)*.
 
 * Juan Treminio, Blog. ***Traefik on Docker for Web Developers With bonus Let's Encrypt SSL!*** <br/>
   Accessed: *December de 2020*. <br/>
-  Disponível: *[https://jtreminio.com/blog/traefik-on-docker-for-web-developers/](https://jtreminio.com/blog/traefik-on-docker-for-web-developers/)*.
+  Available: *[https://jtreminio.com/blog/traefik-on-docker-for-web-developers/](https://jtreminio.com/blog/traefik-on-docker-for-web-developers/)*.
 
 * William Oliveira, Blog. ***COMANDOS MAIS UTILIZADOS NO DOCKER*** <br/>
   Accessed: *December de 2020*. <br/>
-  Disponível: *[https://woliveiras.com.br/posts/comandos-mais-utilizados-no-docker/](https://woliveiras.com.br/posts/comandos-mais-utilizados-no-docker/)*.
+  Available: *[https://woliveiras.com.br/posts/comandos-mais-utilizados-no-docker/](https://woliveiras.com.br/posts/comandos-mais-utilizados-no-docker/)*.
 
 ### License
 
