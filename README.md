@@ -368,19 +368,19 @@ docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(d
 ### Referências:
 
 * Docker - Official Site, Docker Documentation. ***Docker overview*** <br/>
-  Acessado: *Dezembro de 2020* <br/>
+  Acessado: *Dezembro de 2019* <br/>
   Disponível: *[https://docs.docker.com/engine/docker-overview/](https://docs.docker.com/engine/docker-overview/)*
 
 * Docker Compose - Official Site, Docker Compose Documentation. ***Docker Compose File*** <br/>
-  Acessado: *Dezembro de 2020* <br/>
+  Acessado: *Dezembro de 2019* <br/>
   Disponível: *[https://docs.docker.com/compose/compose-file/](https://docs.docker.com/compose/compose-file/)*
 
 * Traefik - Official Site, Traefik Documentation. ***Configuration Introduction - How the Magic Happens*** <br/>
-  Acessado: *Dezembro de 2020* <br/>
+  Acessado: *Dezembro de 2019* <br/>
   Disponível: *[https://docs.traefik.io/getting-started/configuration-overview/](https://docs.traefik.io/getting-started/configuration-overview/)*
 
 * Marcelo Franco, YouTube, Playlist. ***Modo swarm do Docker usando o Traefik como proxy reverso*** <br/>
-  Acessado: *Dezembro de 2020*. <br/>
+  Acessado: *Dezembro de 2019*. <br/>
   Disponível: *[https://www.youtube.com/channel/UC7-HcNHVyIZ2nQ2FhAhOtPA/](https://www.youtube.com/channel/UC7-HcNHVyIZ2nQ2FhAhOtPA/)*.
 
 * Aloïs Micard, Tech blog. ***How to expose Traefik 2.x dashboard securely on Docker Swarm*** <br/>
@@ -400,15 +400,15 @@ docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(d
   Disponível: *[https://containo.us/blog/traefik-2-tls-101-23b4fbee81f1/](https://containo.us/blog/traefik-2-tls-101-23b4fbee81f1/)*.
 
 * Tim Kamanin, Blog. ***Docker compose and Traefik example configuration (domain name + SSL certificate)*** <br/>
-  Acessado: *Dezembro de 2020*. <br/>
+  Acessado: *Dezembro de 2019*. <br/>
   Disponível: *[https://timonweb.com/tutorials/an-example-of-docker-compose-and-traefik-config-domain-name-ssl-certificate/](https://timonweb.com/tutorials/an-example-of-docker-compose-and-traefik-config-domain-name-ssl-certificate/)*.
 
 * Juan Treminio, Blog. ***Traefik on Docker for Web Developers With bonus Let's Encrypt SSL!*** <br/>
-  Acessado: *Dezembro de 2020*. <br/>
+  Acessado: *Dezembro de 2019*. <br/>
   Disponível: *[https://jtreminio.com/blog/traefik-on-docker-for-web-developers/](https://jtreminio.com/blog/traefik-on-docker-for-web-developers/)*.
 
 * William Oliveira, Blog. ***COMANDOS MAIS UTILIZADOS NO DOCKER*** <br/>
-  Acessado: *Dezembro de 2020*. <br/>
+  Acessado: *Dezembro de 2019*. <br/>
   Disponível: *[https://woliveiras.com.br/posts/comandos-mais-utilizados-no-docker/](https://woliveiras.com.br/posts/comandos-mais-utilizados-no-docker/)*.
 
 ### Licença
